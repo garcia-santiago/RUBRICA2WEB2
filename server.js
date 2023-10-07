@@ -15,8 +15,14 @@ app.get('/productos', (req, res)=>{
         const getSql = "SELECT * from productos";
         connection.query(getSql, function (err, result) {
           if (err) throw err;
-          res.status(200).send(result)
-          res.end()
+          if(result.length==0){
+            res.status(200).send("No hay registros!")
+          }
+          else{
+            res.status(200).send(result)
+            res.end()
+          }
+
         });
       } catch (error) {
         res.status(400).send(error.message)
@@ -28,9 +34,14 @@ app.get('/productos/:id_producto', (req, res)=>{
         const id_producto = req.params.id_producto
         const getSql = `SELECT * from productos WHERE id=${id_producto}`;
         connection.query(getSql, function (err, result) {
-          if (err) throw err;
-          res.status(200).send(result)
-          res.end()
+          if (err) {res.status(400).send("Error en la consulta!")};
+          if(result.length==0){
+            res.status(200).send("No exite el registro!")
+          }
+          else{
+            res.status(200).send(result)
+            res.end()
+          }
         });
       } catch (error) {
         res.status(400).send(error.message)
@@ -45,7 +56,7 @@ app.post('/productos/', (req, res) =>{
 
         connection.query(postSql, [id_producto, nombre, descripcion, precio, stock], function (err, result) {
           if (err) throw err;
-          res.status(200).send(result)
+          res.status(200).send("Producto agregado correctamente!")
           res.end()
         }); 
       } catch (error) {
@@ -61,8 +72,14 @@ app.patch('/productos/', (req, res) =>{
 
         connection.query(patchSql, [nombre, descripcion, precio, stock, id_producto], function (err, result) {
           if (err) throw err;
-          res.status(200).send(result)
-          res.end()
+          if(result.affectedRows==1){
+            res.status(200).send("Registro actualizado correctamente!")
+            res.end()
+          }
+          else{
+            res.status(200).send("Error actualizando registro!")
+            res.end()
+          }
         }); 
       } catch (error) {
         res.status(400).send(error.message)
@@ -75,8 +92,14 @@ app.delete('/productos/:id_producto', (req, res)=>{
         const deleteSql = `DELETE from productos WHERE id=${id_producto}`;
         connection.query(deleteSql, function (err, result) {
           if (err) throw err;
-          res.status(200).send(result)
-          res.end()
+          if(result.affectedRows==1){
+            res.status(200).send("Registro eliminado correctamente!")
+            res.end()
+          }
+          else{
+            res.status(200).send("Error eliminando registro!")
+            res.end()
+          }
         });
       } catch (error) {
         res.status(400).send(error.message)
@@ -89,8 +112,13 @@ app.get('/ventas', (req, res)=>{
         const getSql = "SELECT * from ventas";
         connection.query(getSql, function (err, result) {
           if (err) throw err;
-          res.status(200).send(result)
-          res.end()
+          if(result.length==0){
+            res.status(200).send("No hay registros!")
+          }
+          else{
+            res.status(200).send(result)
+            res.end()
+          }
         });
       } catch (error) {
         res.status(400).send(error.message)
@@ -103,8 +131,13 @@ app.get('/ventas/:id_venta', (req, res)=>{
         const getSql = `SELECT * from ventas WHERE id_venta=${id_venta}`;
         connection.query(getSql, function (err, result) {
           if (err) throw err;
-          res.status(200).send(result)
-          res.end()
+          if(result.length==0){
+            res.status(200).send("No exite el registro!")
+          }
+          else{
+            res.status(200).send(result)
+            res.end()
+          }
         });
       } catch (error) {
         res.status(400).send(error.message)
@@ -120,13 +153,14 @@ app.post('/ventas/', (req, res) =>{
             if (err) throw err;
             if(result[0].stock<cantidad_venta){
                 res.status(200).send("No hay stock suficiente!")
+                res.end()
             }
             else{
                 const postSql = `INSERT INTO ventas SET id_venta=?, id_producto=?, nombre_cliente=?, telefono_cliente=?, fecha_venta=?, cantidad_venta=?`;
 
                 connection.query(postSql, [id_venta, id_producto, nombre_cliente, telefono_cliente, fecha_venta, cantidad_venta], function (err, result) {
                   if (err) throw err;
-                  res.status(200).send(result)
+                  res.status(200).send("Venta agregado correctamente!")
                   res.end()
                 }); 
             }
@@ -145,8 +179,14 @@ app.patch('/ventas/', (req, res) =>{
 
         connection.query(postSql, [id_producto, nombre_cliente, telefono_cliente, fecha_venta, cantidad_venta, id_venta], function (err, result) {
           if (err) throw err;
-          res.status(200).send(result)
-          res.end()
+          if(result.affectedRows==1){
+            res.status(200).send("Registro actualizado correctamente!")
+            res.end()
+          }
+          else{
+            res.status(200).send("Error actualizando registro!")
+            res.end()
+          }
         });  
       } catch (error) {
         res.status(400).send(error.message)
@@ -159,8 +199,14 @@ app.delete('/ventas/:id_venta', (req, res)=>{
         const deleteSql = `DELETE from ventas WHERE id_venta=${id_venta}`;
         connection.query(deleteSql, function (err, result) {
           if (err) throw err;
-          res.status(200).send(result)
-          res.end()
+          if(result.affectedRows==1){
+            res.status(200).send("Registro eliminado correctamente!")
+            res.end()
+          }
+          else{
+            res.status(200).send("Error eliminando registro!")
+            res.end()
+          }
         });
       } catch (error) {
         res.status(400).send(error.message)
